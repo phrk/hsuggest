@@ -21,13 +21,13 @@ int main(int argc, char** argv) {
 	
 	for (int i = 0; i<1000000; i++) {
 		char bf[255];
-		sprintf(bf, "sieg heil %d", i);
+		sprintf(bf, "foo bar %d", i);
 		//std::cout << bf << std::endl;
 		std::string query(bf);
 		suggest.addQuery(Suggestions::QueryInfo(query, i));
 	}
 	
-	std::string query("sieg heil 120");
+	std::string query("foo bar 120");
 	std::cout << "\nquering " << query << std::endl;
 	
 	std::vector<std::string> suggests;
