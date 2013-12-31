@@ -6,6 +6,7 @@
 #include <tr1/unordered_map>
 #include <string>
 #include <list>
+#include <boost/shared_ptr.hpp>
 
 class Suggestions
 {
@@ -33,5 +34,7 @@ public:
 	void getSuggest(const std::string &prefix,
 					std::vector<std::string> &suggest) const;
 };
+
+typedef boost::shared_ptr<Suggestions> SuggestionsPtr;
 
 #endif

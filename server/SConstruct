@@ -1,0 +1,20 @@
+_CCFLAGS = '-c -Wall '
+
+_LINKFLAGS = '-g -v -lcurl'
+
+_CXX = ' clang++'# -Wc++11-extensions'
+
+Program('suggest_server', 
+['main.cpp',
+'SuggestServer.cpp',
+'../SuggestCore.cpp',
+'../../tetramorph/threadpool/threadpool.cpp',
+'../../tetramorph/hpoolserver/hpoolserver.cpp',
+'../../tetramorph/hpoolserver/http/HttpSrv.cpp',
+'../../tetramorph/common/string_utils.cpp',
+'../../tetramorph/crypt/md5.c',
+'../../tetramorph/crypt/base64.cpp',
+'../../tetramorph/crypt/sha1.cpp',
+'../../tetramorph/threadpool/tasklauncher.cpp',
+'../../tetramorph/threadpool/locks.cpp'], LIBS=['pthread'], 
+LIBPATH='.', CCFLAGS=_CCFLAGS, LINKFLAGS=_LINKFLAGS, CXX=_CXX)
