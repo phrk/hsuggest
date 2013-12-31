@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+#include <cstdio>
 
 void SuggestServer::httpHandler(HttpSrv::ConnectionPtr http_conn,
 							HttpSrv::RequestPtr req)
@@ -40,27 +41,55 @@ void SuggestServer::httpHandler(HttpSrv::ConnectionPtr http_conn,
 	}
 	reponse_json += " ] ";
 	http_conn->sendResponse(reponse_json);
+	http_conn->close();
 }
 
 SuggestServer::SuggestServer(TaskLauncherPtr launcher, int port)
 {
 	suggest_core.reset(new Suggestions());
-	
-	
-	std::ifstream in ("queries.in");
-	char query_c[100];
-	while (!in.eof()) {
-		in.getline(query_c, 100);
-		std::string query(query_c);
-		std::transform(query.begin(),
-						query.end(), query.begin(), ::tolower);
-		suggest_core->addQuery(Suggestions::QueryInfo(query, 1));
+	int i = 0;
+	{
+		FILE *f = fopen("../crawlers/queries.in", "r");
+		char query_c[200];
+		
+		std::string query = "";
+		while (!feof(f)) {
+			fgets(query_c, 200, f);
+			query = std::string(query_c);
+			query = query.substr(0, query.size()-1);
+			if (i%1000==0)
+				std::cout << i <<  query << std::endl;
+			i++;
+			std::transform(query.begin(),
+							query.end(), query.begin(), ::tolower);
+			suggest_core->addQuery(Suggestions::QueryInfo(query, 1));
+		}
 	}
-	in.close();
+	
+	{
+		FILE *f = fopen("../crawlers/so_queries.in", "r");
+		char query_c[200];
+		int i = 0;
+		std::string query = "";
+		while (!feof(f)) {
+			fgets(query_c, 200, f);
+			query = std::string(query_c);
+			query = query.substr(0, query.size()-1);
+			if (i%1000==0)
+				std::cout << i <<  query << std::endl;
+			i++;
+			std::transform(query.begin(),
+							query.end(), query.begin(), ::tolower);
+			suggest_core->addQuery(Suggestions::QueryInfo(query, 1));
+		}
+	}
+	
+	std::cout << "loaded: " << i << std::endl;
 	
 	http_server.reset(new HttpSrv(launcher,
 							HttpSrv::ResponseInfo("application/json; charset=utf-8",
 								"highinit suggest server"), 
 							boost::bind(&SuggestServer::httpHandler, this, _1, _2)));
 	http_server->start(port);
+	
 }

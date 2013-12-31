@@ -31,7 +31,7 @@ void Suggestions::addQuery(const QueryInfo &_query_info)
 			std::list<QueryInfo*> q_vec;
 			q_vec.push_back(query_info);
 			it->second.merge(q_vec, QueryInfoComp);
-			while (it->second.size() > 4)
+			while (it->second.size() > 10)
 				it->second.pop_back();
 		} else {
 			std::list<QueryInfo*> q_vec;

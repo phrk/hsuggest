@@ -16,7 +16,7 @@ import codecs
 import md5
 
 browser  = webdriver.Firefox()
-f = open('queries.in', 'w')
+f = open('queries.in', 'a')
 
 def crawlPage(browser, pageid, f):
 	url = "http://toster.ru/questions/latest?page="+str(pageid)
@@ -25,5 +25,5 @@ def crawlPage(browser, pageid, f):
 	for elem in elems:
 		f.write(elem.find_element_by_xpath("div[1]/div[1]/a[1]").text.encode('utf-8')+'\n')
 	
-for i in range(1, 10000):
+for i in range(1706, 10000):
 	crawlPage(browser, i, f)

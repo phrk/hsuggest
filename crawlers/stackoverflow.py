@@ -16,7 +16,7 @@ import codecs
 import md5
 
 browser  = webdriver.Firefox()
-f = open('so_queries.in', 'w')
+f = open('so_queries.in', 'a')
 
 def crawlPage(browser, pageid, f):
 	url = "http://stackoverflow.com/questions?pagesize=50&sort=frequent&page="+str(pageid)
@@ -26,6 +26,6 @@ def crawlPage(browser, pageid, f):
 		f.write(elem.find_element_by_xpath("div[2]/h3[1]/a").text.encode('utf-8')+'\n')
 		
 
-for i in range(1, 13000):
+for i in range(775, 13000):
 	crawlPage(browser, i, f)
 
