@@ -16,7 +16,7 @@ void SuggestServer::httpHandler(HttpSrv::ConnectionPtr http_conn,
 	
 	//std::tr1::unordered_map<std::string, std::string>::iterator 
 	it =
-			req->values_GET.find("prefix");
+			req->values_GET.find("term");
 	if (it == req->values_GET.end()) {
 		http_conn->close();
 		return;
@@ -27,22 +27,23 @@ void SuggestServer::httpHandler(HttpSrv::ConnectionPtr http_conn,
 	std::vector<std::string> suggestions;
 	suggest_core->getSuggest(prefix, suggestions);
 	
-	std::string reponse_json = "{ [ ";
+	std::string reponse_json = " [ ";
 	for (int i = 0; i<suggestions.size(); i++) {
 		std::transform(suggestions[i].begin(),
 						suggestions[i].end(), suggestions[i].begin(), ::tolower);
-		//reponse_json += "{ \"label\" : \""+suggestions[i]+"\", ";
-		//reponse_json += "\"value\" : \""+suggestions[i]+"\" }";
-		reponse_json += "\""+suggestions[i]+"\"";
+		reponse_json += "{ \"id\" : \""+suggestions[i]+"\", ";
+		reponse_json += "\"label\" : \""+suggestions[i]+"\",";
+		reponse_json += "\"value\" : \""+suggestions[i]+"\" }";
+		//reponse_json += "\""+suggestions[i]+"\"";
 		if (i != suggestions.size()-1)
 			reponse_json += ", ";
 	}
-	reponse_json += " ] }";
+	reponse_json += " ] ";
 	http_conn->sendResponse(reponse_json);
 }
 
 SuggestServer::SuggestServer(TaskLauncherPtr launcher, int port)
-{	
+{
 	suggest_core.reset(new Suggestions());
 	
 	
