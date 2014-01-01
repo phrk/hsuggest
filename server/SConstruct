@@ -2,7 +2,7 @@ _CCFLAGS = '-c -Wall '
 
 _LINKFLAGS = '-g -v -lcurl'
 
-_CXX = ' clang++'# -Wc++11-extensions'
+_CXX = ' g++'# -Wc++11-extensions'
 
 Program('suggest_server', 
 ['main.cpp',
