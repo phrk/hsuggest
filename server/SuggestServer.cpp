@@ -62,7 +62,7 @@ SuggestServer::SuggestServer(TaskLauncherPtr launcher, int port)
 			i++;
 			std::transform(query.begin(),
 							query.end(), query.begin(), ::tolower);
-			suggest_core->addQuery(Suggestions::QueryInfo(query, 1));
+			suggest_core->addQuery(QueryInfo(query, 1));
 		}
 	}
 	
@@ -80,7 +80,7 @@ SuggestServer::SuggestServer(TaskLauncherPtr launcher, int port)
 			i++;
 			std::transform(query.begin(),
 							query.end(), query.begin(), ::tolower);
-			suggest_core->addQuery(Suggestions::QueryInfo(query, 1));
+			suggest_core->addQuery(QueryInfo(query, 1));
 		}
 	}
 	
