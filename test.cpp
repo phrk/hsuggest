@@ -5,15 +5,14 @@
  * Created on December 22, 2013, 10:53 PM
  */
 
+/*
+
 #include <cstdlib>
 #include "SuggestCore.h"
 
 #include <iostream>
 using namespace std;
 
-/*
- * 
- */
 int main(int argc, char** argv) {
 
 	
@@ -40,3 +39,4 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
+*/

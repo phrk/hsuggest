@@ -4,22 +4,20 @@
 #include <algorithm>
 #include <cstdio>
 
-void SuggestServer::httpHandler(HttpSrv::ConnectionPtr http_conn,
-							HttpSrv::RequestPtr req)
+void SuggestServer::httpHandler(HttpConnectionPtr http_conn,
+							HttpRequestPtr req)
 {
 	
-	std::tr1::unordered_map<std::string, std::string>::iterator it =
+	hiaux::hashtable<std::string, std::string>::iterator it =
 					req->values_GET.begin();
-	while (it != req->values_GET.end()) {
+/*	while (it != req->values_GET.end()) {
 		std::cout << it->first << "/" << it->second << std::endl;
 		it++;
 	}
+*/	
+	it = req->values_GET.find("term");
 	
-	//std::tr1::unordered_map<std::string, std::string>::iterator 
-	it =
-			req->values_GET.find("term");
 	if (it == req->values_GET.end()) {
-		http_conn->close();
 		return;
 	}
 	
@@ -30,8 +28,8 @@ void SuggestServer::httpHandler(HttpSrv::ConnectionPtr http_conn,
 	
 	std::string reponse_json = " [ ";
 	for (int i = 0; i<suggestions.size(); i++) {
-		std::transform(suggestions[i].begin(),
-						suggestions[i].end(), suggestions[i].begin(), ::tolower);
+		//std::transform(suggestions[i].begin(),
+		//				suggestions[i].end(), suggestions[i].begin(), ::tolower);
 		reponse_json += "{ \"id\" : \""+suggestions[i]+"\", ";
 		reponse_json += "\"label\" : \""+suggestions[i]+"\",";
 		reponse_json += "\"value\" : \""+suggestions[i]+"\" }";
@@ -41,7 +39,7 @@ void SuggestServer::httpHandler(HttpSrv::ConnectionPtr http_conn,
 	}
 	reponse_json += " ] ";
 	http_conn->sendResponse(reponse_json);
-	http_conn->close();
+	//http_conn->close();
 }
 
 SuggestServer::SuggestServer(TaskLauncherPtr launcher, int port)
@@ -58,11 +56,15 @@ SuggestServer::SuggestServer(TaskLauncherPtr launcher, int port)
 			query = std::string(query_c);
 			query = query.substr(0, query.size()-1);
 			if (i%1000==0)
-				std::cout << i <<  query << std::endl;
+				std::cout << i << " " << query << std::endl;
 			i++;
-			std::transform(query.begin(),
-							query.end(), query.begin(), ::tolower);
-			suggest_core->addQuery(QueryInfo(query, 1));
+			//std::transform(query.begin(),
+			//				query.end(), query.begin(), ::tolower);
+			toLowerUtf8(query);
+			suggest_core->addQuery(query);
+			
+			//if (i>10000) break;
+			
 		}
 	}
 	
@@ -76,20 +78,22 @@ SuggestServer::SuggestServer(TaskLauncherPtr launcher, int port)
 			query = std::string(query_c);
 			query = query.substr(0, query.size()-1);
 			if (i%1000==0)
-				std::cout << i <<  query << std::endl;
+				std::cout << i << " " <<  query << std::endl;
 			i++;
-			std::transform(query.begin(),
-							query.end(), query.begin(), ::tolower);
-			suggest_core->addQuery(QueryInfo(query, 1));
+			//std::transform(query.begin(),
+			//				query.end(), query.begin(), ::tolower);
+			toLowerUtf8(query);
+			suggest_core->addQuery(query);
+			
+			//if (i>10000) break;
 		}
 	}
 	
 	std::cout << "loaded: " << i << std::endl;
 	
-	http_server.reset(new HttpSrv(launcher,
-							HttpSrv::ResponseInfo("application/json; charset=utf-8",
+	http_server.reset(new HttpServer(launcher,
+							ResponseInfo("application/json; charset=utf-8",
 								"highinit suggest server"), 
-							boost::bind(&SuggestServer::httpHandler, this, _1, _2)));
-	http_server->start(port);
-	
+							boost::bind(&SuggestServer::httpHandler, this, _1, _2),
+							port));
 }

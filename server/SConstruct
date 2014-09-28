@@ -1,20 +1,48 @@
-_CCFLAGS = '-c -Wall '
+import sys
+sys.path.insert(0, '../../hiaux/hibuilder/')
 
-_LINKFLAGS = '-g -v -lcurl'
+from hibuilder import HiBuilder
 
-_CXX = ' g++'# -Wc++11-extensions'
+env = Environment()
 
-Program('suggest_server', 
-['main.cpp',
-'SuggestServer.cpp',
-'../SuggestCore.cpp',
-'../../tetramorph/threadpool/threadpool.cpp',
-'../../tetramorph/hpoolserver/hpoolserver.cpp',
-'../../tetramorph/hpoolserver/http/HttpSrv.cpp',
-'../../tetramorph/common/string_utils.cpp',
-'../../tetramorph/crypt/md5.c',
-'../../tetramorph/crypt/base64.cpp',
-'../../tetramorph/crypt/sha1.cpp',
-'../../tetramorph/threadpool/tasklauncher.cpp',
-'../../tetramorph/threadpool/locks.cpp'], LIBS=['pthread'], 
-LIBPATH='.', CCFLAGS=_CCFLAGS, LINKFLAGS=_LINKFLAGS, CXX=_CXX)
+b = HiBuilder("suggestd", "clang++")
+
+hicore_path = "../../"
+hiaux_path = "../../"
+hithird_path = "../../"
+
+b.addPath(hicore_path)
+b.addPath(hiaux_path)
+
+b.addPath("/usr/local/include")
+
+b.addPath(hicore_path+"zeit/cpp-client/")
+b.connectLib(hicore_path+"zeit/cpp-client/")
+
+b.connectLib(hicore_path+"ranker/")
+b.addPath(hicore_path+"ranker/")
+
+b.addPath("../hashd/cpp-client/")
+
+b.addPath("./")
+b.addPath("../")
+
+b.addPath(hiaux_path+"hiaux/structs/")
+b.connectLib(hiaux_path+"hiaux/loadconf/")
+b.connectLib(hiaux_path+"hiaux/network/")
+b.connectLib(hiaux_path+"hiaux/network/HttpServer/")
+b.connectLib(hiaux_path+"hiaux/crypt/")
+
+b.addPath(hithird_path+"thirdparty/http-parser/")
+b.connectLib(hithird_path+"thirdparty/http-parser/")
+
+b.addCCFlags([])
+b.addCppGlob("*.cpp")
+b.addCppGlob("../*.cpp")
+b.addCppGlob("*.pb.cc")
+
+
+b.addLinkFlags(["-lprotobuf", "-ljansson", "-lpq", 
+    "-L/usr/local/lib/"])
+
+b.build(Program)

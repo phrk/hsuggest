@@ -8,15 +8,15 @@
 #ifndef SUGGESTSERVER_H
 #define	SUGGESTSERVER_H
 
-#include "../SuggestCore.h"
-#include "../../tetramorph/hpoolserver/http/HttpSrv.h"
+#include "SuggestCore.h"
+#include "hiaux/network/HttpServer/HttpServer.h"
 
 class SuggestServer
 {
 	SuggestionsPtr suggest_core;
-	HttpSrvPtr http_server;
+	HttpServerPtr http_server;
 public:
-	void httpHandler(HttpSrv::ConnectionPtr, HttpSrv::RequestPtr);
+	void httpHandler(HttpConnectionPtr, HttpRequestPtr);
 	SuggestServer(TaskLauncherPtr launcher, int port);
 };
 
